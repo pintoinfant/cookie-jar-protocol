@@ -1,4 +1,3 @@
-"use client";
 import Image from "next/image";
 import { ConnectButton } from "@rainbow-me/rainbowkit";
 import { useAccount } from "wagmi";
@@ -6,11 +5,25 @@ import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { ModeToggle } from "@/components/ui/mode-toggle";
 import { Badge } from "@/components/ui/badge";
+import { fetchMetadata } from "frames.js/next";
+
+export async function generateMetadata() {
+  return {
+    title: "My Page",
+    // provide a full URL to your /frames endpoint
+    other: await fetchMetadata(
+      new URL(
+        "/frames",
+        process.env.VERCEL_URL
+          ? `https://${process.env.VERCEL_URL}`
+          : "http://localhost:3000"
+      )
+    ),
+  };
+}
 
 export default function Home() {
   const account = useAccount();
-
-  useEffect(() => {}, []);
 
   return (
     <main className="container flex min-h-screen flex-col items-center justify-center p-10">
