@@ -1,14 +1,39 @@
 import { Button } from "frames.js/next";
 import { frames } from "../frames";
+import { getProfileData } from "@/lib/getProfileData";
 
 const handleRequest = frames(async (ctx) => {
+  const data = await getProfileData(ctx.message?.requesterFid.toString() || "");
+
   return {
     image: (
-      <div
-        tw="bg-black flex w-full h-full justify-center items-center"
-        className=" items-center"
-      >
-        <div tw="text-white">World Coin verification</div>
+      <div tw="bg-black flex w-full h-full flex-col p-10 " style={{ gap: 80 }}>
+        <div tw="flex justify-between items-center">
+          <img
+            src="http://localhost:3000/logo/cookie-header.png"
+            alt=""
+            height={100}
+          />
+          <div tw="flex justify-center items-center" style={{ gap: 20 }}>
+            <div tw="text-white text-4xl" className=" text-5">
+              {`@${data.Socials.Social[0].profileName}`}
+            </div>
+          </div>
+        </div>
+
+        <div tw="flex flex-col gap-4" style={{ gap: 40 }}>
+          <img
+            src="http://localhost:3000/logo/worldcoin.png"
+            alt=""
+            width={525}
+            // height={200}
+          />
+          <div tw="flex text-white text-4xl items-center">
+            <span>Our</span>
+            <span tw="text-[#00D395] ml-2">trusted</span>
+            <span tw="ml-2">backend will check if you are human :)</span>
+          </div>
+        </div>
       </div>
     ),
     textInput: "Enter the Nullifier ",
