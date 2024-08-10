@@ -23,10 +23,14 @@ const handleRequest = frames(async (ctx) => {
 
         <div tw="flex flex-col gap-4" style={{ gap: 40 }}>
           <img
-            src="http://localhost:3000/logo/worldcoin.png"
+            src="http://localhost:3000/logo/Worldcoin_Logo.png"
             alt=""
-            width={525}
-            // height={200}
+            // width={525}
+            height={200}
+            style={{
+              filter: "invert(100%)",
+              marginLeft: -63,
+            }}
           />
           <div tw="flex text-white text-4xl items-center">
             <span>Our</span>

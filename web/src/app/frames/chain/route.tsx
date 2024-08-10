@@ -1,13 +1,15 @@
 import { Button } from "frames.js/next";
 import { frames } from "../frames";
+
 import { getProfileData } from "@/lib/getProfileData";
 
 const handleRequest = frames(async (ctx) => {
+  console.log(JSON.stringify(ctx.walletAddress, null, 2));
   const data = await getProfileData(ctx.message?.requesterFid.toString() || "");
 
   return {
     image: (
-      <div tw="bg-black flex w-full h-full flex-col p-10 " style={{ gap: 70 }}>
+      <div tw="bg-black flex w-full h-full flex-col p-10 " style={{ gap: 100 }}>
         <div tw="flex justify-between items-center">
           <img
             src="http://localhost:3000/logo/cookie-header.png"
@@ -23,10 +25,9 @@ const handleRequest = frames(async (ctx) => {
 
         <div tw="flex flex-col gap-4" style={{ gap: 50 }}>
           <div tw="flex text-white text-5xl items-center">
-            <span>Leave a </span>
-            <span tw="text-[#00D395] ml-2">note!</span>
+            <span>Where do you want to </span>
+            <span tw="text-[#00D395] ml-2">withdraw ?</span>
           </div>
-          <div tw="text-white text-4xl">(Eg:Purchased Devcon Ticket)</div>
         </div>
 
         <div
@@ -37,20 +38,37 @@ const handleRequest = frames(async (ctx) => {
         >
           <div tw="text-5xl">via</div>
           <img
-            src="http://localhost:3000/logo/eas-white.png"
+            src="http://localhost:3000/logo/ccip-white.png"
             alt=""
             height={150}
           />
         </div>
       </div>
     ),
-    textInput: "Enter the Note",
     buttons: [
       <Button
         action="post"
-        target={`/withdraw?amount=${ctx.searchParams["amount"]}&chain=${ctx.searchParams["amount"]}`}
+        target={`/note?amount=${ctx.searchParams["amount"]}&chain=mode`}
       >
-        withdraw
+        Mode
+      </Button>,
+      <Button
+        action="post"
+        target={`/note?amount=${ctx.searchParams["amount"]}&chain=op`}
+      >
+        Optimism
+      </Button>,
+      <Button
+        action="post"
+        target={`/note?amount=${ctx.searchParams["amount"]}&chain=base`}
+      >
+        Base
+      </Button>,
+      <Button
+        action="post"
+        target={`/note?amount=${ctx.searchParams["amount"]}&chain=celo`}
+      >
+        Celo
       </Button>,
     ],
   };
