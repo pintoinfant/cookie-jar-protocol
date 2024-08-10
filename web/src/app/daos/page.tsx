@@ -8,18 +8,33 @@ import { Button } from "@/components/ui/button";
 import DonutChart from "@/components/DonutChart";
 import { ConnectButton } from "@rainbow-me/rainbowkit";
 import { NotDaoMember } from "@/components/NotDaoMemeber";
-
+import {
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
+} from "@/components/ui/select"
 
 
 export default function Home() {
     const account = useAccount();
-    const [isMember, setIsMember] = useState(false);
+    const [isMember, setIsMember] = useState(true);
     const [amountAbleToWithdraw, setAmountAbleToWithdraw] = useState(50);
     const [totalAmountInJar, setTotalAmountInJar] = useState(1000);
     const [amount, setAmount] = useState(10);
     const [message, setMessage] = useState("");
+    const [chain, setChain] = useState("optimism");
 
     useEffect(() => { }, []);
+
+    function handleWithdraw() {
+        console.log({
+            amount,
+            message,
+            chain
+        })
+    }
 
     return (
         <main className="container flex min-h-screen flex-col items-center justify-center p-10">
@@ -45,10 +60,26 @@ export default function Home() {
                         </div>
                         <div className="my-2">
                             <Label htmlFor="message">Message</Label>
-                            <Input className="dark:bg-[#111111] bg-zinc-200 ring-1 ring-black mt-2" type="text" id="message" placeholder="Enter the message to write" onChange={(e) =>  setMessage(e.target.value)} />
+                            <Input className="dark:bg-[#111111] bg-zinc-200 ring-1 ring-black mt-2" type="text" id="message" placeholder="Enter the message to write" onChange={(e) => setMessage(e.target.value)} />
+                        </div>
+                        <div className="my-2">
+                            <Label htmlFor="chain">Chain</Label>
+                            <Select onValueChange={(chainValue) => setChain(chainValue)} 
+                            defaultValue={chain}>
+                                <SelectTrigger className="w-[280px]">
+                                    <SelectValue className="mt-2" placeholder="Choose a chain to withdraw"/>
+                                </SelectTrigger>
+                                <SelectContent>
+                                    <SelectItem value="optimism">Optimism</SelectItem>
+                                    <SelectItem value="base">Base</SelectItem>
+                                    <SelectItem value="mode">Mode</SelectItem>
+                                    <SelectItem value="celo">Celo</SelectItem>
+                                </SelectContent>
+                            </Select>
+
                         </div>
                         <div className="mt-6 flex justify-end">
-                            <Button>Submit</Button>
+                            <Button onClick={handleWithdraw}>Submit</Button>
                         </div>
                     </div>) : <NotDaoMember />}
             </section>
