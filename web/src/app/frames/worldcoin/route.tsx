@@ -10,7 +10,7 @@ const handleRequest = frames(async (ctx) => {
       <div tw="bg-black flex w-full h-full flex-col p-10 " style={{ gap: 80 }}>
         <div tw="flex justify-between items-center">
           <img
-            src="https://cd9c-49-205-84-30.ngrok-free.app/logo/cookie-header.png"
+            src="http://localhost:3000/logo/cookie-header.png"
             alt=""
             height={100}
           />
@@ -23,7 +23,7 @@ const handleRequest = frames(async (ctx) => {
 
         <div tw="flex flex-col gap-4" style={{ gap: 40 }}>
           <img
-            src="https://cd9c-49-205-84-30.ngrok-free.app/logo/Worldcoin_Logo.png"
+            src="http://localhost:3000/logo/Worldcoin_Logo.png"
             alt=""
             // width={525}
             height={200}

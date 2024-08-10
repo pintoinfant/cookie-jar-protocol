@@ -7,6 +7,7 @@ const handleRequest = frames(async (ctx) => {
   const data = await getProfileData(ctx.message?.requesterFid.toString() || "");
   const total = 100;
   const possibleWithdraw = 12;
+  console.log(JSON.stringify(ctx.message?.inputText, null, 2));
   if (verified) {
     return {
       image: (
@@ -16,7 +17,7 @@ const handleRequest = frames(async (ctx) => {
         >
           <div tw="flex justify-between items-center">
             <img
-              src="https://cd9c-49-205-84-30.ngrok-free.app/logo/cookie-header.png"
+              src="http://localhost:3000/logo/cookie-header.png"
               alt=""
               height={100}
             />

@@ -2,7 +2,6 @@ import Image from "next/image";
 import { ModeToggle } from "@/components/ui/mode-toggle";
 import { fetchMetadata } from "frames.js/next";
 import Home from "@/components/screens/home";
-
 export async function generateMetadata() {
   return {
     title: "My Page",
@@ -19,7 +18,6 @@ export async function generateMetadata() {
 }
 
 export default function Index() {
-
   return (
     <main className="container flex min-h-screen flex-col items-center justify-center p-10">
       <div className="absolute top-5 right-5">
@@ -42,7 +40,7 @@ export default function Index() {
 
       <section className="lg:max-w-5xl lg:w-full ">
         <div className="ring-1 ring-zinc-700 rounded-xl p-8 w-full">
-          <Home />
+          {/* <Home /> */}
         </div>
       </section>
     </main>

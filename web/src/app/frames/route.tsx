@@ -12,7 +12,7 @@ const handleRequest = frames(async (ctx) => {
       >
         <div tw="flex flex-col gap-2 px-16 py-16">
           <img
-            src="https://cd9c-49-205-84-30.ngrok-free.app/logo/header.png"
+            src="http://localhost:3000/logo/header.png"
             alt="Cookie Jar"
             height={200}
           />
@@ -20,7 +20,7 @@ const handleRequest = frames(async (ctx) => {
         </div>
         <div tw="flex justify-end mt-[-205] mr-[30]">
           <img
-            src="https://cd9c-49-205-84-30.ngrok-free.app/logo/cookie.png"
+            src="http://localhost:3000/logo/cookie.png"
             alt="Cookie Jar"
             height={350}
           />
@@ -31,10 +31,7 @@ const handleRequest = frames(async (ctx) => {
       <Button action="post" target="/profile">
         Get Started
       </Button>,
-      <Button
-        action="post_redirect"
-        target="https://cd9c-49-205-84-30.ngrok-free.app"
-      >
+      <Button action="post_redirect" target="http://localhost:3000">
         Create your Jar
       </Button>,
     ],
