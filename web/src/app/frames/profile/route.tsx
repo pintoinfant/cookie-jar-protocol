@@ -12,7 +12,7 @@ const handleRequest = frames(async (ctx) => {
       <div tw="bg-black flex w-full h-full flex-col p-10 " style={{ gap: 100 }}>
         <div tw="flex justify-between items-center">
           <img
-            src="http://localhost:3000/logo/cookie-header.png"
+            src="https://cd9c-49-205-84-30.ngrok-free.app/logo/cookie-header.png"
             alt=""
             height={100}
           />
