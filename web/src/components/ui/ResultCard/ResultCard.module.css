@@ -1,0 +1,60 @@
+@import url('https://fonts.googleapis.com/css2?family=Patrick+Hand&display=swap');
+
+.card {
+  background-color: #ffffff;
+  border-radius: 8px;
+  padding: 15px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Softer shadow */
+  border: 1px solid #ccc; /* Subtle border */
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  font-family: 'Patrick Hand', sans-serif; /* Handwritten font */
+}
+
+.description {
+  font-size: 16px;
+  color: #333333;
+  margin-bottom: 10px;
+  font-weight: normal; /* Normal font weight */
+}
+
+.amount {
+  font-size: 18px;
+  font-weight: normal; /* Normal font weight */
+  margin-bottom: 15px;
+  color: #343a40;
+}
+
+.actions {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.upvote, .downvote {
+  background-color: transparent; /* Remove background color */
+  border: 1px solid; /* Flat button style */
+  border-radius: 12px;
+  padding: 4px 12px; /* Reduced padding */
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: normal; /* Normal font weight */
+}
+
+.upvote {
+  border-color: #28a745;
+  color: #28a745;
+}
+
+.downvote {
+  border-color: #dc3545;
+  color: #dc3545;
+}
+
+.icon {
+  margin-right: 5px;
+  font-size: 14px;
+}
