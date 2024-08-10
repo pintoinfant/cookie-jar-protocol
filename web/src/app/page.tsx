@@ -1,11 +1,8 @@
 import Image from "next/image";
-import { ConnectButton } from "@rainbow-me/rainbowkit";
-import { useAccount } from "wagmi";
-import { useEffect, useState } from "react";
-import { Button } from "@/components/ui/button";
 import { ModeToggle } from "@/components/ui/mode-toggle";
-import { Badge } from "@/components/ui/badge";
 import { fetchMetadata } from "frames.js/next";
+import Home from "@/components/screens/home";
+
 export async function generateMetadata() {
   return {
     title: "My Page",
@@ -21,8 +18,7 @@ export async function generateMetadata() {
   };
 }
 
-export default function Home() {
-  const account = useAccount();
+export default function Index() {
 
   return (
     <main className="container flex min-h-screen flex-col items-center justify-center p-10">
@@ -46,24 +42,7 @@ export default function Home() {
 
       <section className="lg:max-w-5xl lg:w-full ">
         <div className="ring-1 ring-zinc-700 rounded-xl p-8 w-full">
-          {!account?.address ? (
-            <div className="flex justify-center items-center flex-col">
-              <h3 className="text-md mb-5">
-                Connect your wallet to get started
-              </h3>
-              <ConnectButton />
-            </div>
-          ) : (
-            <div className="flex justify-center items-start flex-col">
-              <div className="flex w-full justify-between items-center">
-                <ConnectButton />
-              </div>
-
-              {account?.address && (
-                <div className="mt-10 flex justify-center items-between flex-col w-full"></div>
-              )}
-            </div>
-          )}
+          <Home />
         </div>
       </section>
     </main>
