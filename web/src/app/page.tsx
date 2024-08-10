@@ -6,7 +6,6 @@ import { Button } from "@/components/ui/button";
 import { ModeToggle } from "@/components/ui/mode-toggle";
 import { Badge } from "@/components/ui/badge";
 import { fetchMetadata } from "frames.js/next";
-
 export async function generateMetadata() {
   return {
     title: "My Page",
