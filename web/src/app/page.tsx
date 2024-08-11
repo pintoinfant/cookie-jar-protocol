@@ -2,7 +2,8 @@ import Image from "next/image";
 import { ModeToggle } from "@/components/ui/mode-toggle";
 import { fetchMetadata } from "frames.js/next";
 import Home from "@/components/screens/home";
-
+import CreateJar from "@/components/screens/create-jar";
+import { cookieJarAbi, OP_SEPOLIA_cookieJarAddress, BASE_SEPOLIA_cookieJarAddress } from "@/utils/const";
 
 export async function generateMetadata() {
   return {
@@ -36,13 +37,23 @@ export default function Index() {
         />
         <div className="mr-10">
           <div className="text-3xl font-bold">some app</div>
-          <div className="text-lg ">this app does something</div>
+          <div className="text-lg ">this app does something tes</div>
+          Hi
+          <CreateJar
+            contractAddress={OP_SEPOLIA_cookieJarAddress}
+            contractAbi={
+              cookieJarAbi
+            } />
         </div>
       </div>
 
       <section className="lg:max-w-5xl lg:w-full ">
         <div className="ring-1 ring-zinc-700 rounded-xl p-8 w-full">
-          {/* <Home /> */}
+          <CreateJar
+            contractAddress={OP_SEPOLIA_cookieJarAddress}
+            contractAbi={
+              cookieJarAbi
+            } />
         </div>
       </section>
     </main>
