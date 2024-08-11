@@ -1,12 +1,16 @@
 "use client";
 import CreateJar from "@/components/screens/create-jar";
-import { cookieJarAbi, OP_SEPOLIA_cookieJarAddress, BASE_SEPOLIA_cookieJarAddress } from "@/utils/const";
+import { cookieJarAbi, cookieJarContractAddress } from "@/utils/const";
+import { useChainId } from "wagmi";
 
 export default function Page() {
+    const chainId = useChainId();
     return (
         <div className="">
             <CreateJar
-                contractAddress={OP_SEPOLIA_cookieJarAddress}
+                contractAddress={
+                    cookieJarContractAddress(chainId) as string
+                }
                 contractAbi={
                     cookieJarAbi
                 } />

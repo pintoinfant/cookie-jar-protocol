@@ -6,6 +6,8 @@ import "@rainbow-me/rainbowkit/styles.css";
 import Image from "next/image";
 import { ModeToggle } from "@/components/ui/mode-toggle";
 import Link from "next/link";
+import { useAccount } from "wagmi";
+import { ConnectButton } from "@rainbow-me/rainbowkit";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -26,22 +28,25 @@ export default function RootLayout({
         <Providers>
           <main className="container flex min-h-screen flex-col items-center justify-center p-10">
             <div className="absolute top-5 right-5 flex justify-center items-center">
-              <div className="flex gap-3 mr-5 text-emerald-400">
-                <Link href={"/create-jar"}>/create-jar</Link>
+              <div className="flex text-emerald-400 mr-3">
+                <Link className="mr-4" href={"/create-jar"}>/create-jar</Link>
                 <Link href={"/notes"}>/notes</Link>
               </div>
-
+              <div className="flex justify-center items-center mr-5">
+                <ConnectButton />
+              </div>
               <ModeToggle />
             </div>
             <div className="relative flex place-items-center">
-              <Image
-                className="relative mr-2"
-                src="/logo/cookie.png"
-                alt="Cookie Jar Logo"
-                width={180}
-                height={180}
-                priority
-              />
+              <Link href="/">
+                <Image
+                  className="relative mr-2"
+                  src="/logo/cookie.png"
+                  alt="Cookie Jar Logo"
+                  width={180}
+                  height={180}
+                  priority
+                /></Link>
               <div className="mr-10">
                 <div className="text-3xl font-bold">
                   <Image
