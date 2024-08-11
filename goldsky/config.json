@@ -1,0 +1,24 @@
+{
+    "version": "1",
+    "name": "cookiejar",
+    "abis": {
+      "cookiejar": {
+        "path": "./abi.json"
+      }
+    },
+    "instances": [
+      {
+        "abi": "cookiejar",
+        "address": "0xA0b3Fa18a089F8bff398Fe8B83B8aC97DFF90548",
+        "startBlock": 15785008,
+        "chain": "optimism-sepolia"
+      },
+      {
+        "abi": "cookiejar",
+        "address": "0x0810b2d3c23d7207c6b15fb6b3303e99561cb80f",
+        "startBlock": 13802959,
+        "chain": "base-sepolia"
+      }
+    ]
+  }
+  
