@@ -12,45 +12,15 @@ interface NotesProps {
 
 export default function Notes({ allNotes }: NotesProps) {
   return (
-    <div
-      style={{
-        display: "flex",
-        justifyContent: "center",
-        alignItems: "center",
-        height: "100vh",
-        backgroundColor: "#f8f9fa",
-        fontFamily: "Patrick Hand",
-      }}
-    >
-      <div
-        style={{
-          padding: "20px",
-          maxWidth: "1000px",
-          width: "100%",
-          margin: "0 auto",
-          backgroundColor: "#ffffff",
-          borderRadius: "12px",
-          boxShadow: "0 0 20px rgba(0,0,0,0.1)",
-          overflow: "hidden",
-        }}
-      >
+    <div>
+      <div>
         <h1
-          style={{
-            textAlign: "center",
-            fontSize: "24px",
-            marginBottom: "20px",
-            color: "#333",
-            textTransform: "lowercase",
-          }}
+          className="text-white text-4xl font-bold text-center"
         >
           cookiejar/compound-dao
         </h1>
         <div
-          style={{
-            display: "grid",
-            gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))", // Increased card width
-            gap: "20px",
-          }}
+          className="gap-3 grid grid-cols-3"
         >
           {allNotes.map((item, index) => (
             <ResultCard

@@ -16,7 +16,7 @@ import {
     SelectValue,
 } from "@/components/ui/select";
 import { useWriteContract } from "wagmi"
-import { OP_SEPOLIA_cookieJarAddress, BASE_SEPOLIA_cookieJarAddress, cookieJarAbi } from "@/utils/const"
+import { cookieJarContractAddress, cookieJarAbi } from "@/utils/const"
 import { useRouter } from 'next/navigation';
 
 export default function Home({ params }: { params: { id: string } }) {
@@ -36,7 +36,7 @@ export default function Home({ params }: { params: { id: string } }) {
     function handleWithdraw() {
         writeContractAsync({
             abi: cookieJarAbi,
-            address: BASE_SEPOLIA_cookieJarAddress,
+            address: cookieJarContractAddress(84532),
             functionName: 'withdrawCC',
             args: [
                 params.id,

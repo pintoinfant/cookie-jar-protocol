@@ -46,12 +46,12 @@ const completeCCWithdrawal = async (jarId: string, amount: string, note: string,
 export async function POST(request: Request) {
     const req = await request.json();
     const url = request.url
-    let sourceChainId;
+    let sourceChainId = '';
     if (url == "https://api.goldsky.com/api/public/project_clzphgane7fmt01v37dcxbj7t/subgraphs/cookiejar-optimism-sepolia/1.0.0/gn") {
-        sourceChainId == optimismSepolia.id
+        sourceChainId == String(optimismSepolia.id)
     }
     if (url == "https://api.goldsky.com/api/public/project_clzphgane7fmt01v37dcxbj7t/subgraphs/cookiejar-base-sepolia/1.0.0/gn") {
-        sourceChainId == baseSepolia.id
+        sourceChainId == String(baseSepolia.id)
     }
     const { jarId, amount, note, requester, chainId } = req;
     try {
