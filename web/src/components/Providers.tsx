@@ -9,12 +9,9 @@ import * as React from "react";
 import { ThemeProvider as NextThemesProvider } from "next-themes";
 import { type ThemeProviderProps } from "next-themes/dist/types";
 import {
-  mainnet,
-  optimism,
-  arbitrum,
-  sepolia,
   optimismSepolia,
-  arbitrumSepolia,
+  baseSepolia,
+  celoAlfajores,
 } from "wagmi/chains";
 import { QueryClientProvider, QueryClient } from "@tanstack/react-query";
 const queryClient = new QueryClient();
@@ -23,12 +20,9 @@ const config = getDefaultConfig({
   appName: "Some App",
   projectId: process.env.NEXT_PUBLIC_PROJECT_ID || "",
   chains: [
-    mainnet,
-    optimism,
-    arbitrum,
-    sepolia,
+    baseSepolia,
     optimismSepolia,
-    arbitrumSepolia,
+    celoAlfajores,
   ],
   ssr: true, // If your dApp uses server side rendering (SSR)
 });
