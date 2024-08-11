@@ -42,7 +42,7 @@ const handleRequest = frames(async (ctx) => {
     ),
     textInput: "Enter the Nullifier ",
     buttons: [
-      <Button action="post" target="/amount">
+      <Button key={1} action="post" target="/amount">
         Verify with worldcoin
       </Button>,
     ],
