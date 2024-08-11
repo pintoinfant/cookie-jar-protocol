@@ -22,7 +22,7 @@ export default function Home() {
           </div>
 
           {account?.address && (
-            <div className="mt-10 flex justify-center items-between flex-col w-full"></div>
+            <div className="mt-10 flex justify-center items-between flex-col w-full">hELLO</div>
           )}
         </div>
       )}
