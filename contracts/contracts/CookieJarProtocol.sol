@@ -1,12 +1,34 @@
-// SPDX-License-Identifier: MIT
-pragma solidity ^0.8.19;
-import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
-import "@openzeppelin/contracts/governance/IGovernor.sol";
-import {IEAS, AttestationRequest, AttestationRequestData} from "@ethereum-attestation-service/eas-contracts/contracts/IEAS.sol";
-import {NO_EXPIRATION_TIME, EMPTY_UID} from "@ethereum-attestation-service/eas-contracts/contracts/Common.sol";
+// SPDX-License-Identifier: UNLICENSED
+pragma solidity ^0.8.26;
+
+import {IEAS, AttestationRequest, AttestationRequestData} from "https://github.com/ethereum-attestation-service/eas-contracts/blob/master/contracts/EAS.sol";
+import {NO_EXPIRATION_TIME, EMPTY_UID} from "https://github.com/ethereum-attestation-service/eas-contracts/blob/master/contracts/Common.sol";
+
+interface IERC20 {
+    function transfer(address to, uint256 value) external returns (bool);
+
+    function transferFrom(
+        address from,
+        address to,
+        uint256 value
+    ) external returns (bool);
+
+    function approve(address spender, uint256 value) external returns (bool);
+}
+
+interface IGovernor {
+    function quorum(uint256 timepoint) external view returns (uint256);
+
+    function getVotes(
+        address account,
+        uint256 timepoint
+    ) external view returns (uint256);
+}
 
 contract CookieJarProtocol {
     error InvalidEAS();
+
+    uint256 constant LOCKED_FUNDS = 0.001 ether;
 
     // The address of the global EAS contract.
     IEAS private immutable _eas;
@@ -16,23 +38,34 @@ contract CookieJarProtocol {
     uint256 public lockedFunds;
 
     struct CookieJarWithdrawal {
-        // Note
         string note;
-        // Amount
         uint256 amount;
-        // Requester
         address requester;
-        // Attestation UID
         bytes32 attestationUID;
     }
 
     struct CookieJar {
+        mapping(uint16 => CookieJarWithdrawal) withdrawals;
         bytes32 jarId;
         address owner;
         IERC20 daoTokenAddress; // Should be deployed at the same chain as CookieJar
         IGovernor daoGovernorAddress; // Should be deployed at the same chain as CookieJar
         uint256 jarBalance;
-        CookieJarWithdrawal[] withdrawals;
+        uint16 noOfWithdrawals;
+    }
+
+    struct CompleteCCWithdrawalCallData {
+        address _requester;
+        uint256 _amount;
+        uint32 _sourceChainId;
+        uint32 _targetChainId;
+        address _jarOwner;
+        uint256 _jarBalance;
+        bytes32 _jarId;
+        uint16 _noOfWithdrawals;
+        IGovernor _daoGovernorAddress;
+        IERC20 _daoTokenAddress;
+        CookieJarWithdrawal[] _withdrawals;
     }
 
     mapping(bytes32 => CookieJar) public jarIdToCookieJar;
@@ -105,7 +138,7 @@ contract CookieJarProtocol {
         address _operator
     ) payable {
         // Ensure sender sent 0.5 ETH to deploy the contract
-        require(msg.value == 0.5 ether, "Invalid deployment fee");
+        require(msg.value == LOCKED_FUNDS, "Invalid deployment fee");
 
         if (address(eas) == address(0)) {
             revert InvalidEAS();
@@ -154,22 +187,18 @@ contract CookieJarProtocol {
         // Check if the user has enough ETH balance to create a new jar
         require(msg.value > 0, "Insufficient deposit to create a new jar");
 
-        CookieJar memory newJar = CookieJar({
-            jarId: keccak256(abi.encodePacked(block.timestamp, msg.sender)),
-            owner: msg.sender,
-            daoTokenAddress: _daoTokenAddress,
-            daoGovernorAddress: _daoGovernorAddress,
-            jarBalance: msg.value,
-            withdrawals: new CookieJarWithdrawal[](0)
-        });
-        jarIdToCookieJar[newJar.jarId] = newJar;
+        bytes32 _jarId = keccak256(
+            abi.encodePacked(block.timestamp, msg.sender)
+        );
+
+        jarIdToCookieJar[_jarId].jarId = _jarId;
+        jarIdToCookieJar[_jarId].owner = msg.sender;
+        jarIdToCookieJar[_jarId].daoTokenAddress = _daoTokenAddress;
+        jarIdToCookieJar[_jarId].daoGovernorAddress = _daoGovernorAddress;
+        jarIdToCookieJar[_jarId].jarBalance = msg.value;
     }
 
     /// @notice Attests to a schema with the given data.
-    /// @param _note The note for the withdraw request
-    /// @param _jarId The jarId associated with the request
-    /// @param _amount The amount to be withdrawn from their share of the Jar
-    /// @return The UID of the new attestation.
     function attestNote(
         string memory _note,
         bytes32 _jarId,
@@ -194,7 +223,7 @@ contract CookieJarProtocol {
     function withdraw(
         bytes32 _jarId,
         uint256 _amount,
-        string memory _note
+        string calldata _note
     ) external {
         require(
             jarIdToCookieJar[_jarId].jarBalance >= _amount,
@@ -205,16 +234,19 @@ contract CookieJarProtocol {
             "Insufficient share of the user"
         );
 
-        jarIdToCookieJar[_jarId].jarBalance -= _amount;
-
         bytes32 _attestationUID = attestNote(_note, _jarId, _amount);
-        CookieJarWithdrawal memory _cookieJarWithdrawal = CookieJarWithdrawal({
+
+        jarIdToCookieJar[_jarId].jarBalance -= _amount;
+        uint16 _noOfWithdrawals = jarIdToCookieJar[_jarId].noOfWithdrawals + 1;
+        jarIdToCookieJar[_jarId].noOfWithdrawals = _noOfWithdrawals;
+        jarIdToCookieJar[_jarId].withdrawals[
+            _noOfWithdrawals
+        ] = CookieJarWithdrawal({
             note: _note,
             amount: _amount,
             requester: msg.sender,
             attestationUID: _attestationUID
         });
-        jarIdToCookieJar[_jarId].withdrawals.push(_cookieJarWithdrawal);
 
         // Send the funds to the requester
         payable(msg.sender).transfer(_amount);
@@ -231,7 +263,7 @@ contract CookieJarProtocol {
     function withdrawCC(
         bytes32 _jarId,
         uint256 _amount,
-        string memory _note,
+        string calldata _note,
         uint32 _chainId
     ) external {
         if (jarIdToCookieJar[_jarId].owner != address(0)) {
@@ -249,9 +281,9 @@ contract CookieJarProtocol {
         bytes32 _jarId,
         uint256 _amount,
         address _requester,
-        string memory _note,
+        string calldata _note,
         uint32 _chainId
-    ) external onlyOperator onlyDAOMember(_jarId, _requester) {
+    ) external onlyOperator {
         require(
             jarIdToCookieJar[_jarId].jarBalance >= _amount,
             "Insufficient balance in the jar"
@@ -261,48 +293,51 @@ contract CookieJarProtocol {
 
         // Create a withdrawal request
         bytes32 _attestationUID = attestNote(_note, _jarId, _amount);
-        CookieJarWithdrawal memory _cookieJarWithdrawal = CookieJarWithdrawal({
+        jarIdToCookieJar[_jarId].noOfWithdrawals =
+            jarIdToCookieJar[_jarId].noOfWithdrawals +
+            1;
+        jarIdToCookieJar[_jarId].withdrawals[
+            jarIdToCookieJar[_jarId].noOfWithdrawals
+        ] = CookieJarWithdrawal({
             note: _note,
             amount: _amount,
             requester: _requester,
             attestationUID: _attestationUID
         });
 
-        jarIdToCookieJar[_jarId].withdrawals.push(_cookieJarWithdrawal);
-
         emit InitiateCCWithdrawal(_jarId, _amount, _requester, _note, _chainId);
     }
 
     // Called on the secondary chain: (On InitiateCCWithdrawal)
     function completeCCWithdrawal(
-        address _requester,
-        uint256 _amount,
-        CookieJar memory _cookieJar,
-        uint32 _sourceChainId,
-        uint32 _targetChainId
+        CompleteCCWithdrawalCallData calldata _data
     ) external onlyOperator {
-        lockedFunds -= _amount;
+        lockedFunds -= _data._amount;
 
-        // Check if the cookie jar exists
-        if (jarIdToCookieJar[_cookieJar.jarId].owner == address(0)) {
-            // Update cookie jar state to this chain
-            jarIdToCookieJar[_cookieJar.jarId] = _cookieJar;
-        } else {
-            // Update the balance of the cookie jar
-            jarIdToCookieJar[_cookieJar.jarId].jarBalance += _amount;
-            jarIdToCookieJar[_cookieJar.jarId].withdrawals = _cookieJar
-                .withdrawals;
+        // Update the storage CookieJar with the memory CookieJar data
+        jarIdToCookieJar[_data._jarId].jarId = _data._jarId;
+        jarIdToCookieJar[_data._jarId].owner = _data._jarOwner;
+        jarIdToCookieJar[_data._jarId].daoTokenAddress = _data._daoTokenAddress;
+        jarIdToCookieJar[_data._jarId].daoGovernorAddress = _data
+            ._daoGovernorAddress;
+        jarIdToCookieJar[_data._jarId].jarBalance = _data._jarBalance;
+
+        // Copy each withdrawal from memory to storage
+        for (uint16 i = 0; i < _data._noOfWithdrawals; i++) {
+            jarIdToCookieJar[_data._jarId].withdrawals[i] = _data._withdrawals[
+                i
+            ];
         }
 
         // Send the funds to the requester
-        payable(_requester).transfer(_amount);
+        payable(_data._requester).transfer(_data._amount);
 
         emit WithdrawalCCHandled(
-            _cookieJar.jarId,
-            _amount,
-            _requester,
-            _sourceChainId,
-            _targetChainId
+            jarIdToCookieJar[_data._jarId].jarId,
+            _data._amount,
+            _data._requester,
+            _data._sourceChainId,
+            _data._targetChainId
         );
     }
 

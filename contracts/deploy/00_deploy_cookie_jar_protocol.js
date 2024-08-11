@@ -1,4 +1,8 @@
-const { contractAddresses } = require("../util/contract-addresses");
+const contractAddresses = {
+  optimism_sepolia: {
+    easContract: "0x4200000000000000000000000000000000000021",
+  },
+};
 
 module.exports = async ({ getNamedAccounts, deployments, ethers, network }) => {
   const { deploy, log } = deployments;
@@ -9,8 +13,9 @@ module.exports = async ({ getNamedAccounts, deployments, ethers, network }) => {
 
   const args = [
     // IEAS eas, bytes32 _cookieJarSchemaEAS
-    contractAddresses.EAS,
-    "0xee7ffacde8a58a8e892d0becf595845ac78d8bc4823b4f96b2b939bce70c5804",
+    contractAddresses[network.name].easContract,
+    "0x99f9fd4bdbcb8bc87353725f28afbbfb4299b6ad0c67471077e089d8e4c6f25d",
+    "0x77FC2336f8d077Fa42BDBF8a11cfe0d0F5330c69",
   ];
 
   const contract = await deploy("CookieJarProtocol", {
