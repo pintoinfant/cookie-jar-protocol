@@ -3,13 +3,15 @@ import { frames } from "../frames";
 
 import { getProfileData } from "@/lib/getProfileData";
 import { publicClient } from "@/utils/Client";
-import { BASE_SEPOLIA_cookieJarAddress, cookieJarAbi } from "@/utils/const";
+import { cookieJarContractAddress, cookieJarAbi } from "@/utils/const";
 
 const handleRequest = frames(async (ctx) => {
   console.log(JSON.stringify(ctx, null, 2));
   const data = await getProfileData(ctx.message?.requesterFid.toString() || "");
   const jarData: any = await publicClient.readContract({
-    address: BASE_SEPOLIA_cookieJarAddress,
+    address: cookieJarContractAddress(
+      parseInt(ctx.searchParams["SourcechainId"])
+    ),
     abi: cookieJarAbi,
     functionName: "jarIdToCookieJar",
     args: [ctx.searchParams["jarId"]],
