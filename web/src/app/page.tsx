@@ -2,6 +2,8 @@ import Image from "next/image";
 import { ModeToggle } from "@/components/ui/mode-toggle";
 import { fetchMetadata } from "frames.js/next";
 import Home from "@/components/screens/home";
+
+
 export async function generateMetadata() {
   return {
     title: "My Page",
