@@ -3,6 +3,9 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
 import "@rainbow-me/rainbowkit/styles.css";
+import Image from "next/image";
+import { ModeToggle } from "@/components/ui/mode-toggle";
+import Link from "next/link";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -20,7 +23,48 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`${inter.className} dark:bg-black`}>
-        <Providers>{children}</Providers>
+        <Providers>
+          <main className="container flex min-h-screen flex-col items-center justify-center p-10">
+            <div className="absolute top-5 right-5 flex justify-center items-center">
+              <div className="flex gap-3 mr-5 text-emerald-400">
+                <Link href={"/create-jar"}>/create-jar</Link>
+                <Link href={"/notes"}>/notes</Link>
+              </div>
+
+              <ModeToggle />
+            </div>
+            <div className="relative flex place-items-center">
+              <Image
+                className="relative mr-2"
+                src="/logo/cookie.png"
+                alt="Cookie Jar Logo"
+                width={180}
+                height={180}
+                priority
+              />
+              <div className="mr-10">
+                <div className="text-3xl font-bold">
+                  <Image
+                    className="relative -ml-3"
+                    src="/logo/cookie-header.png"
+                    alt="Cookie Jar Logo"
+                    width={300}
+                    height={300}
+                    priority
+                  />
+                </div>
+                <div className="text-lg ">no DAO overhead for petty cash</div>
+              </div>
+            </div>
+
+            <section className="lg:max-w-5xl lg:w-full ">
+              <div className="ring-1 ring-zinc-700 rounded-xl p-8 w-full">
+                {children}
+              </div>
+            </section>
+          </main>
+
+        </Providers>
       </body>
     </html>
   );

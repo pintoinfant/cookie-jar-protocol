@@ -35,10 +35,10 @@ const CreateJarComponent = ({ contractAddress, contractAbi }: Props) => {
     };
 
     return (
-        <div className="max-w-lg mx-auto p-6 bg-white rounded-lg shadow-md">
+        <div className="max-w-lg mx-auto p-6 bg-zinc-800 rounded-lg shadow-md">
             <h2 className="text-2xl font-semibold mb-4">Create New Jar</h2>
             <div className="mb-4">
-                <label className="block text-gray-700 text-sm font-bold mb-2">
+                <label className="block text-gray-200 text-sm font-bold mb-2">
                     DAO Token Address
                 </label>
                 <input
@@ -50,7 +50,7 @@ const CreateJarComponent = ({ contractAddress, contractAbi }: Props) => {
                 />
             </div>
             <div className="mb-4">
-                <label className="block text-gray-700 text-sm font-bold mb-2">
+                <label className="block text-gray-200 text-sm font-bold mb-2">
                     DAO Governor Address
                 </label>
                 <input
@@ -62,7 +62,7 @@ const CreateJarComponent = ({ contractAddress, contractAbi }: Props) => {
                 />
             </div>
             <div className="mb-4">
-                <label className="block text-gray-700 text-sm font-bold mb-2">
+                <label className="block text-gray-200 text-sm font-bold mb-2">
                     Deposit Amount (ETH)
                 </label>
                 <input
@@ -74,10 +74,10 @@ const CreateJarComponent = ({ contractAddress, contractAbi }: Props) => {
                 />
             </div>
             {error && <p className="text-red-500 mb-4">{error}</p>}
-            {success && <p className="text-green-500 mb-4">{success}</p>}
+            {success && <p className="text-emerald-500 mb-4">{success}</p>}
             <button
                 onClick={handleCreateJar}
-                className={`w-full p-3 bg-blue-500 text-white font-bold rounded ${isLoading ? 'opacity-50' : ''}`}
+                className={`w-full p-3 bg-emerald-500 text-black font-bold rounded ${isLoading ? 'opacity-50' : ''}`}
                 disabled={isLoading}
             >
                 {isLoading ? 'Creating Jar...' : 'Create Jar'}
