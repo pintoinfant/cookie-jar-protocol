@@ -1,8 +1,12 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useWriteContract } from 'wagmi';
 import { parseEther } from 'viem';
+import { useChainId, useAccount } from 'wagmi';
+import { cookieJarSubgraphUrl } from "@/utils/const";
+import axios from 'axios';
+
 
 type Props = {
     contractAddress: string;
@@ -10,29 +14,84 @@ type Props = {
 };
 
 const CreateJarComponent = ({ contractAddress, contractAbi }: Props) => {
-    const [daoTokenAddress, setDaoTokenAddress] = useState('');
-    const [daoGovernorAddress, setDaoGovernorAddress] = useState('');
-    const [ethAmount, setEthAmount] = useState('');
-    const [error, setError] = useState('');
-    const [success, setSuccess] = useState('');
-    const { writeContract, isPending: isLoading } = useWriteContract();
+    const [daoTokenAddress, setDaoTokenAddress] = useState('0x4359Eba4c70eb4B517Cd61c02C8ad5bff077916D');
+    const [daoGovernorAddress, setDaoGovernorAddress] = useState('0x3B0C03e82c60AF5D16f3419d969d80D3Ed4E0de2');
+    const [ethAmount, setEthAmount] = useState('0.0001');
+
+
+    const { writeContract, isPending: isLoading, error: txError, isSuccess } = useWriteContract();
+    const chainId = useChainId();
+    const account = useAccount();
+
+    async function getFrameUrl() {
+        let goldsky = cookieJarSubgraphUrl(chainId);
+        let query = `query JarCreateds {
+            jarCreateds(
+                first: 10
+                orderBy: timestamp_
+                orderDirection: desc
+            ) {
+                id
+                block_number
+                timestamp_
+                transactionHash_
+                contractId_
+                jarId
+            }
+        }
+        `;
+
+        let response = await axios.post(goldsky, { query });
+        console.log('response from jar creation', response.data);
+        let jarId = response.data.data.jarCreateds[0]?.jarId || "0xde991ad4fec493c8213aba5fd6da8659e31925c5431efcba4d7e63c816d6a31e";
+        // return `${process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : "http://localhost:3000"}/frames?jarId=${jarId}&chainId=${chainId}`;
+        return `https://cookie-jar-protocol.vercel.app/frames?jarId=${jarId}&chainId=${chainId}`;
+    }
+
+    function FrameURLComponent() {
+        const [frameUrl, setFrameUrl] = useState('');
+        useEffect(() => {
+            getFrameUrl().then((url) => {
+                setFrameUrl(url);
+            });
+        }, []);
+
+        return (
+            <div className='mb-3 w-full'>
+                <h1 className='font-bold mb-2 text-xl '>Here goes cookie jar frame link</h1>
+                {frameUrl &&
+                    <p className='text-balance bg-zinc-600 rounded-md p-2 overflow-x-scroll'>
+                        {frameUrl}
+                    </p>
+                }
+            </div>
+        );
+    }
+
 
     const handleCreateJar = () => {
         if (daoTokenAddress && daoGovernorAddress && ethAmount) {
-            writeContract({
+            console.log('Creating Jar...', contractAbi, contractAddress);
+            const hash = writeContract({
                 abi: contractAbi,
                 address: contractAddress as any,
                 functionName: 'createJar',
                 args: [
                     daoTokenAddress,
                     daoGovernorAddress,
-                    ethAmount ? parseEther(ethAmount) : undefined
                 ] as any,
-            });
+                value: parseEther(ethAmount),
+            })
+            console.log('Jar created with hash', hash)
+
         } else {
-            setError('Please fill in all fields.');
+            console.log('Please fill in all fields.');
         }
     };
+
+    useEffect(() => {
+        console.log('txError', txError);
+    }, [txError]);
 
     return (
         <div className="max-w-lg mx-auto p-6 bg-zinc-800 rounded-lg shadow-md">
@@ -73,12 +132,15 @@ const CreateJarComponent = ({ contractAddress, contractAbi }: Props) => {
                     placeholder="0.1"
                 />
             </div>
-            {error && <p className="text-red-500 mb-4">{error}</p>}
-            {success && <p className="text-emerald-500 mb-4">{success}</p>}
+            {txError && <p className="text-red-500 mb-4">{txError.message}</p>}
+            {isSuccess && <p className="text-emerald-500 mb-4">
+                Tx successful</p>}
+
+            {isSuccess && <FrameURLComponent />}
             <button
                 onClick={handleCreateJar}
                 className={`w-full p-3 bg-emerald-500 text-black font-bold rounded ${isLoading ? 'opacity-50' : ''}`}
-                disabled={isLoading}
+                disabled={!daoTokenAddress && !daoGovernorAddress && !ethAmount && !account?.address}
             >
                 {isLoading ? 'Creating Jar...' : 'Create Jar'}
             </button>

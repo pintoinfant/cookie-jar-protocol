@@ -4,7 +4,7 @@ import { EAS, SchemaEncoder } from "@ethereum-attestation-service/eas-sdk";
 import { ethers } from "ethers";
 import { useEffect, useState } from "react";
 
-const schemaDictionary: {[key: number] : { noteSchema: string, upVote: string, graphQL: string, jairID: string, easContract: string }} = {
+const schemaDictionary: { [key: number]: { noteSchema: string, upVote: string, graphQL: string, jairID: string, easContract: string } } = {
   11155420: {
     noteSchema: "0x99f9fd4bdbcb8bc87353725f28afbbfb4299b6ad0c67471077e089d8e4c6f25d",
     upVote: "0x761a985431e4d67486c6595e4a5c220fc99e84f76d9525ee3e8f776580894ccd",
@@ -38,7 +38,7 @@ export default function Page() {
       return {};
     }
   }
-  
+
   function getJson(datas: any[]) {
     return datas.reduce((acc, cur) => {
       acc[cur.value.name] = cur.value.value;
@@ -47,6 +47,7 @@ export default function Page() {
   }
 
   useEffect(() => {
+    console.log('fetching notes', notes);
     const urlParams = new URLSearchParams(window.location.search);
     const chainId = urlParams.get("chainId");
     const fetchNotes = async () => {
@@ -68,13 +69,13 @@ export default function Page() {
             });
 
             const attestationsUIDS = await response.json();
-            console.log({attestationsUIDS})
+            console.log({ attestationsUIDS })
             if (attestationsUIDS.length > 0) {
-              await window.ethereum.request({ method: 'eth_requestAccounts' });                
+              await window.ethereum.request({ method: 'eth_requestAccounts' });
               const provider = new ethers.BrowserProvider(window.ethereum);
 
               const network = await provider.getNetwork();
-            
+
               if (BigInt(network.chainId) !== BigInt(chainId)) {
                 alert('Please switch to the Optimism Sepolia network.');
                 await window.ethereum.request({
@@ -82,7 +83,7 @@ export default function Page() {
                   params: [{ chainId: ethers.toBeHex(chainId) }],
                 });
               }
-            
+
               const signer = await provider.getSigner();
               const eas = new EAS(schemaDictionary[+chainId].easContract);
               eas.connect(signer);
@@ -90,7 +91,7 @@ export default function Page() {
 
               const allNotes = []
               for (const uid of attestationsUIDS) {
-                try{
+                try {
                   const attestation = await eas.getAttestation(uid.id);
                   const data = parseJson(getJson(encoder.decodeData(attestation.data)));
                   allNotes.push({
@@ -101,7 +102,7 @@ export default function Page() {
                     upvotes: 0,
                     downvotes: 0,
                   });
-               }catch(err){}
+                } catch (err) { }
               }
 
               if (allNotes.length > 0) {
@@ -120,8 +121,6 @@ export default function Page() {
   }, []);
 
   return (
-    <div className="ring-1 ring-zinc-700 rounded-xl p-8 w-full">
-      <Notes allNotes={notes} />
-    </div>
+    <Notes allNotes={notes} />
   );
 }

@@ -1,8 +1,6 @@
 export const cookieJarSubgraphUrl = (chainId: number) => {
-  if (chainId === 11155420) {
+  if (chainId === 84532) {
     return "https://api.goldsky.com/api/public/project_clzphgane7fmt01v37dcxbj7t/subgraphs/cookiejar-base-sepolia/1.0.0/gn";
-  } else if (chainId === 84532) {
-    return "https://api.goldsky.com/api/public/project_clzphgane7fmt01v37dcxbj7t/subgraphs/cookiejar-optimism-sepolia/1.0.0/gn";
   }
   return "https://api.goldsky.com/api/public/project_clzphgane7fmt01v37dcxbj7t/subgraphs/cookiejar-optimism-sepolia/1.0.0/gn";
 };
