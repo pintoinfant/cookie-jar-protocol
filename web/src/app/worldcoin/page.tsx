@@ -1,7 +1,11 @@
 "use client";
 
+import { postToIpfs } from "@/lib/postToIpfs";
+import { verifyOffchainAttestation } from "@/lib/verifyAttestation";
+import { offchainAttestation } from "@/lib/worldcoinOffChainAttestation";
 import { VerificationLevel, IDKitWidget, useIDKit } from "@worldcoin/idkit";
 import type { ISuccessResult } from "@worldcoin/idkit";
+import { PinataSDK } from "pinata";
 // import { verify } from "./actions/verify";
 // import axios from "axios";
 
@@ -16,15 +20,36 @@ export default function Page() {
     throw new Error("action is not set in environment variables!");
   }
 
-  const onSuccess = (result: ISuccessResult) => {
+  const onSuccess = async (result: ISuccessResult) => {
     // This is where you should perform frontend actions once a user has been verified, such as redirecting to a new page
     console.log({ result: result });
-    // window.alert(
-    //   "Successfully verified with World ID! Your nullifier hash is: " +
-    //     result.nullifier_hash
-    // );
-    console.log(encodeURI(JSON.stringify(result)));
-    console.log(decodeURI(encodeURI(JSON.stringify(result))));
+    const Attestation = await offchainAttestation();
+    console.log(Attestation);
+    const hash = await postToIpfs(JSON.stringify(Attestation));
+    console.log(hash);
+    const res = {
+      hash: hash,
+    };
+
+    const response = await fetch("/api/get-data-from-ipfs", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(res),
+    });
+    if (!response.ok) {
+      throw new Error(`Error verifying Worldcoin: ${response.statusText}`);
+    }
+
+    const data = await response.json();
+    console.log(data);
+    const verified = await verifyOffchainAttestation(
+      JSON.parse(JSON.parse(data.data))
+    );
+    console.log(verified);
+
+    //Create Attestation
+    //Upload to IPFS
+    //Copy IPFS hash
   };
 
   const handleVerify = async (proof: any) => {
