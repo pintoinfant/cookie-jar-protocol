@@ -42,7 +42,13 @@ const handleRequest = frames(async (ctx) => {
     ),
     textInput: "Enter the Nullifier ",
     buttons: [
-      <Button key={1} action="post" target="/amount">
+      <Button action="link" target="http://localhost:3000/worldcoin">
+        Get your proof here
+      </Button>,
+      <Button
+        action="post"
+        target={`/amount?jarId=${ctx.searchParams["jarId"]}&SourcechainId=${ctx.searchParams["SourcechainId"]}`}
+      >
         Verify with worldcoin
       </Button>,
     ],

@@ -29,44 +29,24 @@ const handleRequest = frames(async (ctx) => {
             <span tw="text-[#00D395] ml-2">withdraw ?</span>
           </div>
         </div>
-
-        <div
-          tw="flex justify-end text-white items-center"
-          style={{
-            gap: 20,
-          }}
-        >
-          <div tw="text-5xl">via</div>
-          <img
-            src="http://localhost:3000/logo/ccip-white.png"
-            alt=""
-            height={150}
-          />
-        </div>
       </div>
     ),
     buttons: [
       <Button
         action="post"
-        target={`/note?amount=${ctx.searchParams["amount"]}&chain=mode`}
-      >
-        Mode
-      </Button>,
-      <Button
-        action="post"
-        target={`/note?amount=${ctx.searchParams["amount"]}&chain=op`}
+        target={`/note?jarId=${ctx.searchParams["jarId"]}&SourcechainId=${ctx.searchParams["SourcechainId"]}&amount=${ctx.searchParams["amount"]}&chain=op`}
       >
         Optimism
       </Button>,
       <Button
         action="post"
-        target={`/note?amount=${ctx.searchParams["amount"]}&chain=base`}
+        target={`/note?jarId=${ctx.searchParams["jarId"]}&SourcechainId=${ctx.searchParams["SourcechainId"]}&amount=${ctx.searchParams["amount"]}&chain=base`}
       >
         Base
       </Button>,
       <Button
         action="post"
-        target={`/note?amount=${ctx.searchParams["amount"]}&chain=celo`}
+        target={`/note?jarId=${ctx.searchParams["jarId"]}&SourcechainId=${ctx.searchParams["SourcechainId"]}&amount=${ctx.searchParams["amount"]}&chain=celo`}
       >
         Celo
       </Button>,

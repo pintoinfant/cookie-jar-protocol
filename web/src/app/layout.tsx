@@ -29,7 +29,9 @@ export default function RootLayout({
           <main className="container flex min-h-screen flex-col items-center justify-center p-10">
             <div className="absolute top-5 right-5 flex justify-center items-center">
               <div className="flex text-emerald-400 mr-3">
-                <Link className="mr-4" href={"/create-jar"}>/create-jar</Link>
+                <Link className="mr-4" href={"/create-jar"}>
+                  /create-jar
+                </Link>
                 <Link href={"/notes"}>/notes</Link>
               </div>
               <div className="flex justify-center items-center mr-5">
@@ -46,7 +48,8 @@ export default function RootLayout({
                   width={180}
                   height={180}
                   priority
-                /></Link>
+                />
+              </Link>
               <div className="mr-10">
                 <div className="text-3xl font-bold">
                   <Image
@@ -68,7 +71,6 @@ export default function RootLayout({
               </div>
             </section>
           </main>
-
         </Providers>
       </body>
     </html>

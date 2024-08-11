@@ -28,10 +28,13 @@ const handleRequest = frames(async (ctx) => {
       </div>
     ),
     buttons: [
-      <Button action="post" target="/profile">
+      <Button
+        action="post"
+        target={`/profile?jarId=${ctx.searchParams["jarId"]}&SourcechainId=${ctx.searchParams["SourcechainId"]}`}
+      >
         Get Started
       </Button>,
-      <Button action="post_redirect" target="http://localhost:3000">
+      <Button action="link" target="http://localhost:3000">
         Create your Jar
       </Button>,
     ],

@@ -2,10 +2,24 @@ import { Button } from "frames.js/next";
 import { frames } from "../frames";
 
 import { getProfileData } from "@/lib/getProfileData";
+import { publicClient } from "@/utils/Client";
+import { BASE_SEPOLIA_cookieJarAddress, cookieJarAbi } from "@/utils/const";
 
 const handleRequest = frames(async (ctx) => {
   console.log(JSON.stringify(ctx, null, 2));
   const data = await getProfileData(ctx.message?.requesterFid.toString() || "");
+  const jarData: any = await publicClient.readContract({
+    address: BASE_SEPOLIA_cookieJarAddress,
+    abi: cookieJarAbi,
+    functionName: "jarIdToCookieJar",
+    args: [ctx.searchParams["jarId"]],
+  });
+  console.log(jarData);
+
+  const convertWeiToEth = (wei: string) => {
+    return parseFloat(wei) / 10 ** 18;
+  };
+  const userPercentage = 0.4; // Get this from governer contract
 
   return {
     image: (
@@ -27,13 +41,17 @@ const handleRequest = frames(async (ctx) => {
           <div tw="flex flex-col gap-4" style={{ gap: 10 }}>
             <div tw="flex text-white text-7xl items-center">
               <span>This jar has</span>
-              <span tw="text-[#00D395] ml-2">100</span>
-              <span tw="ml-2">USDC</span>
+              <span tw="text-[#00D395] ml-2">
+                {convertWeiToEth(jarData[4].toString())}
+              </span>
+              <span tw="ml-2">ETH</span>
             </div>
             <div tw="flex text-white items-center text-4xl">
               <span>You are allowed to withdraw upto</span>
-              <span tw="text-[#00D395] ml-2">12</span>
-              <span tw="ml-2">USDC</span>
+              <span tw="text-[#00D395] ml-2">
+                {convertWeiToEth(jarData[4].toString()) * userPercentage}
+              </span>
+              <span tw="ml-2">ETH</span>
             </div>
           </div>
           <div tw="text-white text-4xl">
@@ -43,7 +61,10 @@ const handleRequest = frames(async (ctx) => {
       </div>
     ),
     buttons: [
-      <Button action="post" target="/worldcoin">
+      <Button
+        action="post"
+        target={`/worldcoin?jarId=${ctx.searchParams["jarId"]}&SourcechainId=${ctx.searchParams["SourcechainId"]}`}
+      >
         Verify with Worldcoin
       </Button>,
     ],

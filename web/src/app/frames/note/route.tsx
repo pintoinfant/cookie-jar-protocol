@@ -47,8 +47,8 @@ const handleRequest = frames(async (ctx) => {
     textInput: "Enter the Note",
     buttons: [
       <Button
-        action="post"
-        target={`/withdraw?amount=${ctx.searchParams["amount"]}&chain=${ctx.searchParams["amount"]}`}
+        action="tx"
+        target={`/withdraw?amount=${ctx.searchParams["amount"]}&chain=${ctx.searchParams["chain"]}&jarId=${ctx.searchParams["jarId"]}`}
       >
         withdraw
       </Button>,

@@ -27,25 +27,26 @@ export default function Page() {
     console.log(Attestation);
     const hash = await postToIpfs(JSON.stringify(Attestation));
     console.log(hash);
+    alert(`proof : ${hash}`);
     const res = {
       hash: hash,
     };
 
-    const response = await fetch("/api/get-data-from-ipfs", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(res),
-    });
-    if (!response.ok) {
-      throw new Error(`Error verifying Worldcoin: ${response.statusText}`);
-    }
+    // const response = await fetch("/api/get-data-from-ipfs", {
+    //   method: "POST",
+    //   headers: { "Content-Type": "application/json" },
+    //   body: JSON.stringify(res),
+    // });
+    // if (!response.ok) {
+    //   throw new Error(`Error verifying Worldcoin: ${response.statusText}`);
+    // }
 
-    const data = await response.json();
-    console.log(data);
-    const verified = await verifyOffchainAttestation(
-      JSON.parse(JSON.parse(data.data))
-    );
-    console.log(verified);
+    // const data = await response.json();
+    // console.log(data);
+    // const verified = await verifyOffchainAttestation(
+    //   JSON.parse(JSON.parse(data.data))
+    // );
+    // console.log(verified);
 
     //Create Attestation
     //Upload to IPFS
