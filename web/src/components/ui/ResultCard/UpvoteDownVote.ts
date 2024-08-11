@@ -15,10 +15,10 @@ export async function createAttestation(firstAttestationUID: string, upvoted: bo
     const walletAddress = await signer.getAddress();
     // Check if the user is on the correct network (Optimism Sepolia)
     const network = await provider.getNetwork();
-    const optimismSepoliaChainId = 11155420;
+    const optimismSepoliaChainId = 84532;
 
     if (BigInt(network.chainId) !== BigInt(optimismSepoliaChainId)) {
-      alert('Please switch to the Optimism Sepolia network.');
+      alert('Please switch to the Base Sepolia network.');
       await window.ethereum.request({
         method: 'wallet_switchEthereumChain',
         params: [{ chainId: ethers.toBeHex(optimismSepoliaChainId) }],
@@ -47,6 +47,7 @@ export async function createAttestation(firstAttestationUID: string, upvoted: bo
 
     const receipt = await transaction.wait();
     console.log('Second attestation UID:', receipt);
+    console.log({firstAttestationUID, receipt})
 
     alert(`Attestation successful! Transaction Hash: ${receipt}`);
   } catch (error) {
