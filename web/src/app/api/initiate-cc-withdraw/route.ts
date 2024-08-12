@@ -2,8 +2,7 @@
 import { NextResponse } from "next/server";
 import { ethers } from "ethers";
 import { optimismSepolia, celoAlfajores, baseSepolia, modeTestnet, celo } from "viem/chains"
-import * as abi from "../../../../../goldsky/abi.json"
-
+import { cookieJarAbi } from "@/utils/const"
 
 const completeCCWithdrawal = async (jarId: string, amount: string, note: string, sender: string, chainId: string, sourceChainId: string) => {
     let rpcUrl = ''
@@ -26,7 +25,8 @@ const completeCCWithdrawal = async (jarId: string, amount: string, note: string,
         address = BASE_CONTRACT
     }
     const provider = new ethers.JsonRpcProvider(rpcUrl)
-    const contract = new ethers.Contract(address, abi, provider)
+    const wallet = new ethers.Wallet(process.env.NEXT_PUBLIC_PRIVATE_KEY as string, provider);
+    const contract = new ethers.Contract(address, cookieJarAbi, wallet)
     const data = [
         sender, // _requester
         amount, // _amount
@@ -40,7 +40,12 @@ const completeCCWithdrawal = async (jarId: string, amount: string, note: string,
         "0xf960c68a7D7BA3a4394134838f625c20c1dc2977", // _daoTokenAddress
         [] // _withdrawals (empty array)
     ]
-    await contract.completeCCWithdrawal(data)
+    const tx = await contract.completeCCWithdrawal(data)
+    console.log(`Transaction hash: ${tx.hash}`);
+    // Optionally wait for the transaction to be mined
+    await tx.wait();
+    console.log('Transaction confirmed!');
+
 }
 
 export async function POST(request: Request) {
