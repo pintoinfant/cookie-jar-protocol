@@ -2,7 +2,11 @@
 import { NextResponse } from "next/server";
 import { ethers } from "ethers";
 import { optimismSepolia, celoAlfajores, baseSepolia, modeTestnet, celo } from "viem/chains"
-import * as abi from "../../../../../goldsky/abi.json"
+import { cookieJarAbi } from "@/utils/const"
+
+const toBigNumber = (value: string) => {
+    return ethers.toBigInt(value)
+}
 
 const withdrawCCRequest = async (jarId: string, amount: string, note: string, sender: string, chainId: string) => {
     let rpcUrl = ''
@@ -12,6 +16,7 @@ const withdrawCCRequest = async (jarId: string, amount: string, note: string, se
 
     if (Number(chainId) == optimismSepolia.id) {
         rpcUrl = optimismSepolia.rpcUrls.default.http[0] as string
+        console.log(rpcUrl)
         address = OP_CONTRACT
     }
     if (Number(chainId) == modeTestnet.id) {
@@ -25,15 +30,36 @@ const withdrawCCRequest = async (jarId: string, amount: string, note: string, se
         address = BASE_CONTRACT
     }
     const provider = new ethers.JsonRpcProvider(rpcUrl)
-    const contract = new ethers.Contract(address, abi, provider)
-    await contract.initiateCCWithdrawal(jarId, amount, sender, note, chainId)
+    const wallet = new ethers.Wallet(process.env.NEXT_PUBLIC_PRIVATE_KEY as string, provider);
+    const contract = new ethers.Contract(address, cookieJarAbi, wallet)
+    console.log(`Calling jarId: ${jarId}, amount: ${amount}, note: ${note}, sender: ${sender}, chainId: ${chainId}`)
+    console.log(`Contract: ${address}`)
+    console.log(jarId,
+        amount,
+        sender,
+        note,
+        chainId
+    )
+
+    const tx = await contract.initiateCCWithdrawal(
+        jarId,
+        amount,
+        sender,
+        note,
+        chainId
+    )
+    console.log(`Transaction hash: ${tx.hash}`);
+    // Optionally wait for the transaction to be mined
+    await tx.wait();
+    console.log('Transaction confirmed!');
 }
 
 export async function POST(request: Request) {
     const req = await request.json();
-    const { jarId, amount, note, requester, chainId } = req;
+    const { jar_id, amount, note, requester, chain_id } = req.data.new;
+    console.log(jar_id, amount, note, requester, chain_id)
     try {
-        await withdrawCCRequest(jarId, amount, note, requester, chainId)
+        await withdrawCCRequest(jar_id, amount, note, requester, chain_id)
     } catch (e) {
         console.error(e);
         return NextResponse.json({ funded: false });
